@@ -1,30 +1,12 @@
-import { Button, Card, Input, Modal, Toast } from '@apps-simples/ui'
-import { useState } from 'react'
+import { Button, Card } from '@apps-simples/ui'
 import { APP_INFO } from '../../config/appInfo'
-import { copyPixKey } from '../support/copyPix'
+import PixSupportAction from '../support/PixSupportAction'
 
 type AboutViewProps = {
   onShareApp: () => void
 }
 
 export default function AboutView({ onShareApp }: AboutViewProps) {
-  const [isManualPixOpen, setIsManualPixOpen] = useState(false)
-  const [pixFeedback, setPixFeedback] = useState<'success' | 'error' | null>(null)
-
-  async function handleCopyPix() {
-    setPixFeedback(null)
-    const result = await copyPixKey(APP_INFO.pix.key)
-
-    if (result.status === 'copied') {
-      setIsManualPixOpen(false)
-      setPixFeedback('success')
-      return
-    }
-
-    setIsManualPixOpen(true)
-    setPixFeedback('error')
-  }
-
   return (
     <div className="about-page">
       <header className="about-page__intro">
@@ -97,41 +79,8 @@ export default function AboutView({ onShareApp }: AboutViewProps) {
           </div>
         </dl>
 
-        <Button type="button" variant="primary" onClick={() => void handleCopyPix()}>
-          Copiar chave Pix
-        </Button>
+        <PixSupportAction label="Copiar chave Pix" />
       </Card>
-
-      <Modal
-        open={isManualPixOpen}
-        onClose={() => setIsManualPixOpen(false)}
-        title="Copiar chave Pix manualmente"
-        footer={(
-          <Button type="button" variant="primary" onClick={() => setIsManualPixOpen(false)}>
-            Fechar
-          </Button>
-        )}
-      >
-        <p>A cópia automática não funcionou. Selecione e copie a chave abaixo:</p>
-        <div className="manual-pix__field">
-          <Input
-            id="manual-pix-key"
-            label="Chave Pix"
-            value={APP_INFO.pix.key}
-            readOnly
-            onFocus={(event) => event.currentTarget.select()}
-          />
-        </div>
-      </Modal>
-
-      <Toast
-        open={pixFeedback != null}
-        type={pixFeedback ?? 'info'}
-        message={pixFeedback === 'success'
-          ? 'Chave Pix copiada para a área de transferência.'
-          : 'Não foi possível copiar automaticamente. Copie a chave manualmente.'}
-        onClose={() => setPixFeedback(null)}
-      />
     </div>
   )
 }

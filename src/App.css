@@ -1,5 +1,8 @@
 .comparison-page,
 .about-page,
+.welcome-card,
+.welcome-card__content,
+.welcome-card__actions,
 .about-page__intro,
 .about-card,
 .about-card__heading,
@@ -100,6 +103,39 @@
 
 .about-contact {
   gap: var(--as-space-3);
+}
+
+.welcome-page {
+  display: grid;
+  place-items: center;
+  min-height: min(32rem, calc(100dvh - 10rem));
+}
+
+.welcome-card {
+  max-width: 40rem;
+  gap: var(--as-space-6);
+}
+
+.welcome-card__content {
+  gap: var(--as-space-3);
+}
+
+.welcome-card__content p,
+.welcome-card__optional {
+  color: var(--as-color-text-secondary);
+}
+
+.welcome-card__optional {
+  font-size: var(--as-font-size-sm);
+}
+
+.welcome-card__actions {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--as-space-3);
+}
+
+.welcome-card__actions .as-button {
+  width: 100%;
 }
 
 .manual-pix__field {
@@ -236,6 +272,10 @@
 }
 
 @media (min-width: 640px) {
+  .welcome-card__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .comparison-products {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

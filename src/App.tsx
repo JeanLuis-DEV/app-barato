@@ -6,6 +6,8 @@ import ProductForm from './features/comparison/ProductForm'
 import type { Product } from './features/comparison/types'
 import HistoryView from './features/history/HistoryView'
 import AboutView from './features/about/AboutView'
+import WelcomeView from './features/onboarding/WelcomeView'
+import { markWelcomeSeen, shouldShowWelcome } from './features/onboarding/onboardingStorage'
 import {
   clearHistory,
   deleteHistoryItem,
@@ -78,6 +80,7 @@ function getInitialHistory() {
 }
 
 export default function App() {
+  const [isWelcomeVisible, setIsWelcomeVisible] = useState(shouldShowWelcome)
   const [initialHistory] = useState(getInitialHistory)
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS)
   const [history, setHistory] = useState<HistoryItem[]>(initialHistory.history)
@@ -90,6 +93,11 @@ export default function App() {
   const [shareFeedback, setShareFeedback] = useState<ShareFeedback | null>(null)
   const [manualShareText, setManualShareText] = useState<string | null>(null)
   const { result, unitError } = calculateComparison(products)
+
+  function continueToApp() {
+    markWelcomeSeen()
+    setIsWelcomeVisible(false)
+  }
 
   async function handleShare(text: string, successMessage: string) {
     setShareFeedback(null)
@@ -261,6 +269,14 @@ export default function App() {
         {result.difference}% mais barato, com economia estimada de{' '}
         {currencyFormatter.format(result.savings)} na quantidade informada.
       </Alert>
+    )
+  }
+
+  if (isWelcomeVisible) {
+    return (
+      <AppLayout appName="App Barato" footer="Apps Simples — Design System oficial">
+        <WelcomeView onContinue={continueToApp} />
+      </AppLayout>
     )
   }
 
