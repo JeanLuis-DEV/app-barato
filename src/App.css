@@ -65,6 +65,35 @@
 
 .comparison-result {
   gap: var(--as-space-3);
+  justify-items: start;
+}
+
+.manual-share__label {
+  display: block;
+  margin-top: var(--as-space-4);
+  margin-bottom: var(--as-space-2);
+  color: var(--as-color-text-primary);
+  font-size: var(--as-font-size-sm);
+  font-weight: var(--as-font-weight-medium);
+}
+
+.manual-share__text {
+  width: 100%;
+  min-height: 12rem;
+  padding: var(--as-space-3);
+  resize: vertical;
+  border: 1px solid var(--as-color-border-subtle);
+  border-radius: var(--as-radius-control);
+  background: var(--as-color-surface);
+  color: var(--as-color-text-primary);
+  font: inherit;
+  line-height: 1.5;
+}
+
+.manual-share__text:focus-visible {
+  outline: 2px solid var(--as-color-primary);
+  outline-offset: 2px;
+  box-shadow: var(--as-shadow-focus);
 }
 
 .history-view__header,

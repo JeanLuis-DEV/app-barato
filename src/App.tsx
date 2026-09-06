@@ -1,4 +1,4 @@
-import { Alert, Button, Modal } from '@apps-simples/ui'
+import { Alert, Button, Modal, Toast, type ToastType } from '@apps-simples/ui'
 import { useState } from 'react'
 import AppLayout from './layouts/AppLayout'
 import { calculateComparison, parseNumber } from './features/comparison/comparison'
@@ -12,6 +12,11 @@ import {
   saveHistory,
 } from './features/history/historyStorage'
 import { HISTORY_SCHEMA_VERSION, type HistoryItem, type HistoryProduct } from './features/history/types'
+import {
+  APP_SHARE_TEXT,
+  buildResultShareText,
+  shareText,
+} from './features/sharing/share'
 import './App.css'
 
 const INITIAL_PRODUCTS: Product[] = [
@@ -37,6 +42,11 @@ type AppView = 'comparison' | 'history'
 type PersistenceFeedback = {
   type: 'error' | 'warning'
   title: string
+  message: string
+}
+
+type ShareFeedback = {
+  type: ToastType
   message: string
 }
 
@@ -76,7 +86,36 @@ export default function App() {
     initialHistory.feedback,
   )
   const [isClearConfirmationOpen, setIsClearConfirmationOpen] = useState(false)
+  const [shareFeedback, setShareFeedback] = useState<ShareFeedback | null>(null)
+  const [manualShareText, setManualShareText] = useState<string | null>(null)
   const { result, unitError } = calculateComparison(products)
+
+  async function handleShare(text: string, successMessage: string) {
+    setShareFeedback(null)
+    const shareResult = await shareText(text)
+
+    if (shareResult.status === 'cancelled') return
+
+    if (shareResult.status === 'manual') {
+      setManualShareText(text)
+      setShareFeedback({
+        type: 'error',
+        message: 'Não foi possível compartilhar automaticamente. Copie o texto manualmente.',
+      })
+      return
+    }
+
+    setManualShareText(null)
+    setShareFeedback({
+      type: 'success',
+      message: shareResult.status === 'copied' ? 'Texto copiado para a área de transferência.' : successMessage,
+    })
+  }
+
+  function shareCurrentResult() {
+    if (result == null) return
+    return handleShare(buildResultShareText(products, result), 'Resultado compartilhado.')
+  }
 
   function updateProduct(index: number, updatedProduct: Product) {
     setProducts((currentProducts) => currentProducts.map((product, productIndex) => (
@@ -228,14 +267,24 @@ export default function App() {
     <AppLayout
       appName="App Barato"
       actions={(
-        <Button
-          type="button"
-          variant="ghost"
-          size="compact"
-          onClick={() => setCurrentView((view) => view === 'comparison' ? 'history' : 'comparison')}
-        >
-          {currentView === 'comparison' ? `Histórico (${history.length})` : 'Comparar'}
-        </Button>
+        <>
+          <Button
+            type="button"
+            variant="ghost"
+            size="compact"
+            onClick={() => void handleShare(APP_SHARE_TEXT, 'App compartilhado.')}
+          >
+            Compartilhar app
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="compact"
+            onClick={() => setCurrentView((view) => view === 'comparison' ? 'history' : 'comparison')}
+          >
+            {currentView === 'comparison' ? `Histórico (${history.length})` : 'Comparar'}
+          </Button>
+        </>
       )}
       footer="Apps Simples — Design System oficial"
     >
@@ -293,6 +342,11 @@ export default function App() {
           <section className="comparison-result" aria-labelledby="comparison-result-title" aria-live="polite">
             <h2 id="comparison-result-title">Resultado</h2>
             {renderResult()}
+            {result != null && (
+              <Button type="button" variant="secondary" onClick={() => void shareCurrentResult()}>
+                Compartilhar resultado
+              </Button>
+            )}
           </section>
         </div>
       ) : (
@@ -321,6 +375,35 @@ export default function App() {
       >
         Esta ação removerá todas as comparações salvas e não poderá ser desfeita.
       </Modal>
+
+      <Modal
+        open={manualShareText != null}
+        onClose={() => setManualShareText(null)}
+        title="Copiar texto manualmente"
+        footer={(
+          <Button type="button" variant="primary" onClick={() => setManualShareText(null)}>
+            Fechar
+          </Button>
+        )}
+      >
+        <p>Selecione e copie o texto abaixo:</p>
+        <label className="manual-share__label" htmlFor="manual-share-text">Texto para compartilhar</label>
+        <textarea
+          id="manual-share-text"
+          className="manual-share__text"
+          value={manualShareText ?? ''}
+          readOnly
+          rows={12}
+          onFocus={(event) => event.currentTarget.select()}
+        />
+      </Modal>
+
+      <Toast
+        open={shareFeedback != null}
+        type={shareFeedback?.type ?? 'info'}
+        message={shareFeedback?.message ?? ''}
+        onClose={() => setShareFeedback(null)}
+      />
     </AppLayout>
   )
 }
