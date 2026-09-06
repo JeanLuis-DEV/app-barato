@@ -3,13 +3,23 @@
 .comparison-products,
 .comparison-products__actions,
 .comparison-result,
+.history-view,
+.history-list,
+.history-item,
+.history-item__products,
+.history-item__result,
 .product-form,
 .product-form__fields {
   display: grid;
 }
 
-.comparison-page {
+.comparison-page,
+.history-view {
   gap: var(--as-space-8);
+}
+
+.persistence-feedback {
+  margin-bottom: var(--as-space-6);
 }
 
 .comparison-page__intro {
@@ -26,6 +36,8 @@
 }
 
 .comparison-products__actions {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--as-space-3);
   justify-items: start;
 }
 
@@ -36,7 +48,8 @@
 }
 
 .product-form__title,
-.comparison-result h2 {
+.comparison-result h2,
+.history-item__result strong {
   margin: 0;
   font-size: var(--as-font-size-lg);
   font-weight: var(--as-font-weight-semibold);
@@ -54,9 +67,72 @@
   gap: var(--as-space-3);
 }
 
+.history-view__header,
+.history-view__actions,
+.history-item__header {
+  display: flex;
+  align-items: center;
+  gap: var(--as-space-3);
+}
+
+.history-view__header,
+.history-item__header {
+  justify-content: space-between;
+}
+
+.history-view__header {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.history-view__actions {
+  flex-wrap: wrap;
+}
+
+.history-list,
+.history-item,
+.history-item__products,
+.history-item__result {
+  gap: var(--as-space-4);
+}
+
+.history-item__header time,
+.history-item__products span,
+.history-item__result span {
+  color: var(--as-color-text-secondary);
+  font-size: var(--as-font-size-sm);
+}
+
+.history-item__products {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-item__products li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--as-space-3);
+  padding-bottom: var(--as-space-3);
+  border-bottom: 1px solid var(--as-color-border-subtle);
+}
+
+.history-item__products li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.history-item__products span {
+  text-align: right;
+}
+
 @media (min-width: 640px) {
   .comparison-products {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .comparison-products__actions {
+    grid-template-columns: repeat(2, max-content);
   }
 }
 
