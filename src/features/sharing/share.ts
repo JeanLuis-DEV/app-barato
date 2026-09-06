@@ -1,7 +1,8 @@
 import { parseNumber } from '../comparison/comparison'
 import type { ComparisonResult, Product } from '../comparison/types'
+import { APP_INFO } from '../../config/appInfo'
 
-export const APP_URL = 'https://appbarato.com.br/'
+export const APP_URL = APP_INFO.siteUrl
 
 export const APP_SHARE_TEXT = `App Barato
 Compare preços e descubra qual produto vale mais a pena.

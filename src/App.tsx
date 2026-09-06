@@ -5,6 +5,7 @@ import { calculateComparison, parseNumber } from './features/comparison/comparis
 import ProductForm from './features/comparison/ProductForm'
 import type { Product } from './features/comparison/types'
 import HistoryView from './features/history/HistoryView'
+import AboutView from './features/about/AboutView'
 import {
   clearHistory,
   deleteHistoryItem,
@@ -37,7 +38,7 @@ const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   currency: 'BRL',
 })
 
-type AppView = 'comparison' | 'history'
+type AppView = 'comparison' | 'history' | 'about'
 
 type PersistenceFeedback = {
   type: 'error' | 'warning'
@@ -272,18 +273,20 @@ export default function App() {
             type="button"
             variant="ghost"
             size="compact"
-            onClick={() => void handleShare(APP_SHARE_TEXT, 'App compartilhado.')}
+            onClick={() => setCurrentView((view) => view === 'about' ? 'comparison' : 'about')}
           >
-            Compartilhar app
+            {currentView === 'about' ? 'Comparar' : 'Sobre'}
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="compact"
-            onClick={() => setCurrentView((view) => view === 'comparison' ? 'history' : 'comparison')}
-          >
-            {currentView === 'comparison' ? `Histórico (${history.length})` : 'Comparar'}
-          </Button>
+          {currentView !== 'about' && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="compact"
+              onClick={() => setCurrentView((view) => view === 'history' ? 'comparison' : 'history')}
+            >
+              {currentView === 'history' ? 'Comparar' : `Histórico (${history.length})`}
+            </Button>
+          )}
         </>
       )}
       footer="Apps Simples — Design System oficial"
@@ -349,13 +352,15 @@ export default function App() {
             )}
           </section>
         </div>
-      ) : (
+      ) : currentView === 'history' ? (
         <HistoryView
           history={history}
           onBack={() => setCurrentView('comparison')}
           onDelete={removeHistoryItem}
           onRequestClear={() => setIsClearConfirmationOpen(true)}
         />
+      ) : (
+        <AboutView onShareApp={() => void handleShare(APP_SHARE_TEXT, 'App compartilhado.')} />
       )}
 
       <Modal
