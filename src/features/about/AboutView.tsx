@@ -18,6 +18,7 @@ export default function AboutView({ onShareApp }: AboutViewProps) {
         <div className="about-card__heading">
           <h2>{APP_INFO.name}</h2>
           <p>{APP_INFO.description}</p>
+          <p>Dados armazenados neste dispositivo.</p>
         </div>
 
         <dl className="about-details">

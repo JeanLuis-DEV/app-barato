@@ -147,6 +147,11 @@ export default function App() {
     setIsCurrentComparisonSaved(false)
   }
 
+  function clearCurrentComparison() {
+    setProducts(INITIAL_PRODUCTS)
+    setIsCurrentComparisonSaved(false)
+  }
+
   function saveCurrentComparison() {
     if (result == null || isCurrentComparisonSaved) return
 
@@ -347,6 +352,10 @@ export default function App() {
                 Remover Produto C
               </Button>
             )}
+
+            <Button type="button" variant="ghost" onClick={clearCurrentComparison}>
+              Limpar
+            </Button>
 
             <Button
               type="button"
