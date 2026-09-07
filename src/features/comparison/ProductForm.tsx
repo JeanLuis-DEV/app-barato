@@ -30,7 +30,24 @@ export default function ProductForm({ label, product, onChange }: ProductFormPro
 
   return (
     <Card className="product-form">
-      <h2 className="product-form__title">Produto {label}</h2>
+      <h2 className="product-form__title">
+        <svg
+          className="product-form__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.5h7.8a2 2 0 0 0 1.9-1.4L20.5 7H6" />
+          <circle cx="9.5" cy="19" r="1.25" />
+          <circle cx="17" cy="19" r="1.25" />
+        </svg>
+        Opção {label}
+      </h2>
 
       <div className="product-form__fields">
         <Input
@@ -38,7 +55,7 @@ export default function ProductForm({ label, product, onChange }: ProductFormPro
           name={`product-${label}-name`}
           value={product.name ?? ''}
           onChange={(event) => updateProduct('name', event.target.value)}
-          placeholder={`Produto ${label}`}
+          placeholder={`Opção ${label}`}
           autoComplete="off"
         />
 

@@ -36,9 +36,15 @@ export default function AboutView({ onShareApp }: AboutViewProps) {
           </div>
         </dl>
 
-        <Button type="button" variant="secondary" onClick={onShareApp}>
-          Compartilhar App
-        </Button>
+        <div className="about-card__actions">
+          <Button type="button" variant="secondary" onClick={onShareApp}>
+            Compartilhar App
+          </Button>
+
+          <a href={APP_INFO.privacyUrl} target="_blank" rel="noopener noreferrer">
+            Política de Privacidade
+          </a>
+        </div>
       </Card>
 
       <Card className="about-card">
@@ -48,10 +54,7 @@ export default function AboutView({ onShareApp }: AboutViewProps) {
         </div>
 
         <div className="about-contact">
-          <a href={APP_INFO.contact.emailUrl}>E-mail: {APP_INFO.contact.email}</a>
-          <a href={APP_INFO.contact.whatsappUrl} target="_blank" rel="noopener noreferrer">
-            WhatsApp: {APP_INFO.contact.whatsapp}
-          </a>
+          <a href={APP_INFO.contact.emailUrl}>{APP_INFO.contact.email}</a>
         </div>
       </Card>
 
@@ -80,7 +83,9 @@ export default function AboutView({ onShareApp }: AboutViewProps) {
           </div>
         </dl>
 
-        <PixSupportAction label="Copiar chave Pix" />
+        <div className="about-card__actions">
+          <PixSupportAction label="Copiar chave Pix" />
+        </div>
       </Card>
     </div>
   )

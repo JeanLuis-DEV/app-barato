@@ -3,7 +3,6 @@ import type { HistoryItem, HistoryProduct, HistoryResult } from './types'
 
 type HistoryViewProps = {
   history: HistoryItem[]
-  onBack: () => void
   onDelete: (id: string) => void
   onRequestClear: () => void
 }
@@ -23,23 +22,22 @@ const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', {
 })
 
 function getProductName(product: HistoryProduct): string {
-  return product.name || `Produto ${product.label}`
+  return product.name || `Opção ${product.label}`
 }
 
 function describeResult(result: HistoryResult, products: HistoryProduct[]): string {
-  if (result.winner === 'DRAW') return 'Empate entre todos os produtos.'
+  if (result.winner === 'DRAW') return 'Empate entre todas as opções.'
 
   if (result.winner === 'TIE') {
-    return `Produtos ${result.winnerLabels.join(' e ')} empataram como mais vantajosos.`
+    return `Opções ${result.winnerLabels.join(' e ')} empataram como mais vantajosas.`
   }
 
   const winner = products.find(({ label }) => label === result.winner)
-  return `${winner ? getProductName(winner) : `Produto ${result.winner}`} foi mais vantajoso.`
+  return `${winner ? getProductName(winner) : `Opção ${result.winner}`} foi a opção mais vantajosa.`
 }
 
 export default function HistoryView({
   history,
-  onBack,
   onDelete,
   onRequestClear,
 }: HistoryViewProps) {
@@ -51,16 +49,11 @@ export default function HistoryView({
           <p>{history.length} {history.length === 1 ? 'registro salvo' : 'registros salvos'}</p>
         </div>
 
-        <div className="history-view__actions">
-          <Button type="button" variant="ghost" onClick={onBack}>
-            Voltar
+        {history.length > 0 && (
+          <Button type="button" variant="danger" onClick={onRequestClear}>
+            Limpar histórico
           </Button>
-          {history.length > 0 && (
-            <Button type="button" variant="danger" onClick={onRequestClear}>
-              Limpar histórico
-            </Button>
-          )}
-        </div>
+        )}
       </header>
 
       {history.length === 0 ? (
@@ -68,11 +61,6 @@ export default function HistoryView({
           <EmptyState
             title="Nenhuma comparação salva"
             description="Salve uma comparação válida para encontrá-la aqui."
-            action={(
-              <Button type="button" variant="primary" onClick={onBack}>
-                Fazer comparação
-              </Button>
-            )}
           />
         </Card>
       ) : (
@@ -94,7 +82,7 @@ export default function HistoryView({
                 </Button>
               </div>
 
-              <ul className="history-item__products" aria-label="Produtos comparados">
+              <ul className="history-item__products" aria-label="Opções comparadas">
                 {item.products.map((product) => (
                   <li key={product.label}>
                     <strong>{getProductName(product)}</strong>
@@ -122,4 +110,3 @@ export default function HistoryView({
     </section>
   )
 }
-

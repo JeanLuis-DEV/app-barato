@@ -40,6 +40,16 @@ const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   currency: 'BRL',
 })
 
+const percentageFormatter = new Intl.NumberFormat('pt-BR', {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+})
+
+function formatList(items: string[]) {
+  if (items.length < 2) return items[0] ?? ''
+  return `${items.slice(0, -1).join(', ')} e ${items.at(-1)}`
+}
+
 type AppView = 'comparison' | 'history' | 'about'
 
 type PersistenceFeedback = {
@@ -243,43 +253,57 @@ export default function App() {
 
     if (result == null) {
       return (
-        <Alert type="info" title="Preencha pelo menos dois produtos">
-          Informe preço e quantidade maiores que zero em pelo menos dois produtos.
+        <Alert type="info" title="Preencha pelo menos duas opções">
+          Informe preço e quantidade maiores que zero em pelo menos duas opções.
         </Alert>
       )
     }
 
     if (result.winner === 'DRAW') {
       return (
-        <Alert type="info" title="Empate">
-          Os produtos têm o mesmo custo por unidade.
+        <Alert type="info" title="Resultado: Empate.">
+          As opções possuem o mesmo custo por unidade de medida.
         </Alert>
       )
     }
 
+    const percentage = percentageFormatter.format(Number(result.difference))
+
     if (result.winner === 'TIE') {
+      const winnerNames = result.winnerIndexes.map((index) => {
+        const optionLabel = products[index]?.label ?? result.winnerLabels[index]
+        const productName = products[index]?.name?.trim()
+        return productName ? `${productName} (Opção ${optionLabel})` : `Opção ${optionLabel}`
+      })
+
       return (
-        <Alert type="success" title={`Produtos ${result.winnerLabels.join(' e ')} são mais vantajosos`}>
-          Eles têm o mesmo custo por unidade e são {result.difference}% mais baratos que a pior opção.
+        <Alert type="success" title={`Vencedores: ${formatList(winnerNames)}.`}>
+          <div className="comparison-result__summary">
+            <p><strong>Percentual:</strong> {percentage}% mais baratos que a pior opção.</p>
+            <p><strong>Economia:</strong> {currencyFormatter.format(result.savings)} na quantidade informada.</p>
+          </div>
         </Alert>
       )
     }
 
     const winnerIndex = result.winnerIndexes[0]
     const winner = products[winnerIndex]
-    const winnerName = winner?.name?.trim() || `Produto ${result.winner}`
+    const productName = winner?.name?.trim()
+    const winnerName = productName ? `${productName} (Opção ${result.winner})` : `Opção ${result.winner}`
 
     return (
-      <Alert type="success" title={`${winnerName} é mais vantajoso`}>
-        {result.difference}% mais barato, com economia estimada de{' '}
-        {currencyFormatter.format(result.savings)} na quantidade informada.
+      <Alert type="success" title={`Vencedor: ${winnerName}.`}>
+        <div className="comparison-result__summary">
+          <p><strong>Percentual:</strong> {percentage}% mais barato que a pior opção.</p>
+          <p><strong>Economia:</strong> {currencyFormatter.format(result.savings)} na quantidade informada.</p>
+        </div>
       </Alert>
     )
   }
 
   if (isWelcomeVisible) {
     return (
-      <AppLayout appName="App Barato" footer="Apps Simples — Design System oficial">
+      <AppLayout appName="App Barato">
         <WelcomeView onContinue={continueToApp} />
       </AppLayout>
     )
@@ -310,7 +334,6 @@ export default function App() {
           )}
         </>
       )}
-      footer="Apps Simples — Design System oficial"
     >
       {persistenceFeedback && (
         <Alert
@@ -328,34 +351,47 @@ export default function App() {
         <div className="comparison-page">
           <header className="comparison-page__intro">
             <h1>Qual está mais barato?</h1>
-            <p>Compare preço e quantidade de até três produtos.</p>
+            <p>Compare preço e quantidade de até três opções.</p>
           </header>
 
-          <section className="comparison-products" aria-label="Produtos para comparação">
-            {products.map((product, index) => (
-              <ProductForm
-                key={product.label}
-                label={product.label ?? String(index + 1)}
-                product={product}
-                onChange={(updatedProduct) => updateProduct(index, updatedProduct)}
-              />
-            ))}
-          </section>
+          <div className="comparison-products-area">
+            <section className="comparison-products" aria-label="Opções para comparação">
+              {products.map((product, index) => (
+                <div className="comparison-product-slot" key={product.label}>
+                  <ProductForm
+                    label={product.label ?? String(index + 1)}
+                    product={product}
+                    onChange={(updatedProduct) => updateProduct(index, updatedProduct)}
+                  />
+                  {index === 2 && (
+                    <div className="comparison-products__management">
+                      <Button type="button" variant="ghost" size="compact" onClick={removeThirdProduct}>
+                        Remover Opção C
+                      </Button>
+                      <Button type="button" variant="ghost" size="compact" onClick={clearCurrentComparison}>
+                        Limpar
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </section>
+
+            {products.length === INITIAL_PRODUCTS.length && (
+              <div className="comparison-products__management comparison-products__management--without-third">
+                <Button type="button" variant="ghost" size="compact" onClick={clearCurrentComparison}>
+                  Limpar
+                </Button>
+              </div>
+            )}
+          </div>
 
           <div className="comparison-products__actions">
-            {products.length === INITIAL_PRODUCTS.length ? (
+            {products.length === INITIAL_PRODUCTS.length && (
               <Button type="button" variant="secondary" onClick={addThirdProduct}>
-                Adicionar produto
-              </Button>
-            ) : (
-              <Button type="button" variant="ghost" onClick={removeThirdProduct}>
-                Remover Produto C
+                Adicionar opção
               </Button>
             )}
-
-            <Button type="button" variant="ghost" onClick={clearCurrentComparison}>
-              Limpar
-            </Button>
 
             <Button
               type="button"
@@ -380,7 +416,6 @@ export default function App() {
       ) : currentView === 'history' ? (
         <HistoryView
           history={history}
-          onBack={() => setCurrentView('comparison')}
           onDelete={removeHistoryItem}
           onRequestClear={() => setIsClearConfirmationOpen(true)}
         />

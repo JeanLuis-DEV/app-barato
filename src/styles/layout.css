@@ -6,7 +6,6 @@
   padding-right: env(safe-area-inset-right, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   padding-left: env(safe-area-inset-left, 0px);
-  overflow-wrap: anywhere;
 }
 
 .app-layout__container {
@@ -29,16 +28,6 @@
   padding-block: var(--as-space-2);
 }
 
-.app-layout__icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: var(--as-space-8);
-  height: var(--as-space-8);
-  color: var(--as-color-text-secondary);
-  font-size: var(--as-font-size-xl);
-}
-
 .app-layout__name {
   flex: 1;
   min-width: 0;
@@ -57,13 +46,6 @@
 .app-layout__main {
   flex: 1;
   padding-block: var(--as-space-6);
-}
-
-.app-layout__footer {
-  padding-block: var(--as-space-3);
-  color: var(--as-color-text-secondary);
-  font-size: var(--as-font-size-xs);
-  text-align: center;
 }
 
 @media (min-width: 640px) {
