@@ -30,7 +30,7 @@ export default function AboutView({ onShareApp }: AboutViewProps) {
             <dt>Site</dt>
             <dd>
               <a href={APP_INFO.siteUrl} target="_blank" rel="noopener noreferrer">
-                appbarato.com.br
+                app-barato.pages.dev
               </a>
             </dd>
           </div>
