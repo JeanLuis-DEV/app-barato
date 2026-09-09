@@ -9,7 +9,7 @@ Regras:
 - Não duplicar componentes.
 - Manter a estrutura de pastas definida.
 - Manter suporte mobile e desktop.
-- Manter funcionamento como PWA.
+- Manter a aplicação exclusivamente Web, sem PWA, manifest, service worker, APK, Android ou Capacitor.
 - Dados locais devem usar a camada de armazenamento padrão.
 - Backup deve seguir o formato padrão definido pelo App Base.
 - Não adicionar dependências sem necessidade.
